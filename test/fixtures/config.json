@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "catalogue": {
+    "gomod": [
+      {
+        "module": "github.com/avelino/slugify"
+      },
+      {
+        "module": "github.com/otiai10/copy"
+      }
+    ],
+    "maven": [
+      {
+        "group_id": "foo",
+        "artefact_id": "bar"
+      },
+      {
+        "group_id": "junit",
+        "artefact_id": "junit"
+      }
+    ],
+    "npm": [
+      {
+        "name": "express"
+      },
+      {
+        "name": "compression"
+      }
+    ]
+  }
+}
