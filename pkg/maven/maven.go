@@ -3,7 +3,7 @@ package maven
 import (
 	"github.com/vifraa/gopom"
 
-	"github.com/crashdump/libguardian/pkg"
+	"github.com/crashdump/venlock/pkg"
 )
 
 type Maven[T Library] struct{}
@@ -30,7 +30,7 @@ func (m Maven[T]) Collect(path string) (proc pkg.Processor[T], err error) {
 	}
 
 	for _, dep := range pom.Dependencies {
-		proc.Inventory = append(proc.Inventory, T{
+		proc.Found = append(proc.Found, T{
 			GroupId:    dep.GroupID,
 			ArtefactId: dep.ArtifactID,
 		})

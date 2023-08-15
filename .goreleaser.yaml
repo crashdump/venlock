@@ -7,15 +7,19 @@ before:
     # you may remove this if you don't need go generate
     - go generate ./...
 builds:
-  - id: "libguardian"
-    binary: "libguardian"
-    main: ./cmd/libguardian
+  - id: "venlock"
+    binary: "venlock"
+    main: ./cmd/venlock
     env:
       - CGO_ENABLED=0
     goos:
       - linux
       - windows
       - darwin
+
+dockers:
+  - image_templates:
+      - crashdump/venlock
 
 archives:
   - format: tar.gz

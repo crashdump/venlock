@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/mod/modfile"
 
-	"github.com/crashdump/libguardian/pkg"
+	"github.com/crashdump/venlock/pkg"
 )
 
 type GoMod[T Library] struct{}
@@ -24,7 +24,7 @@ func (g GoMod[T]) Filename() string {
 	return "go.mod"
 }
 
-func (g GoMod[T]) Collect(path string) (proc pkg.Processor[T], err error) {
+func (g GoMod[T]) Collect(path string) (proc pkg.Processor[Library], err error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return proc, err
@@ -36,7 +36,7 @@ func (g GoMod[T]) Collect(path string) (proc pkg.Processor[T], err error) {
 	}
 
 	for _, dep := range gomod.Require {
-		proc.Inventory = append(proc.Inventory, T{
+		proc.Found = append(proc.Found, Library{
 			Module: dep.Mod.Path,
 		})
 	}

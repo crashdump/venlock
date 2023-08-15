@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/crashdump/libguardian/pkg"
-	"github.com/crashdump/libguardian/pkg/gomod"
+	"github.com/crashdump/venlock/pkg"
+	"github.com/crashdump/venlock/pkg/gomod"
 )
 
 func TestConfig_SaveAndLoad(t *testing.T) {

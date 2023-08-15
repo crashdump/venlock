@@ -3,7 +3,7 @@ package npm
 import (
 	"os"
 
-	"github.com/crashdump/libguardian/pkg"
+	"github.com/crashdump/venlock/pkg"
 )
 
 type Npm[T Library] struct{}
@@ -34,7 +34,7 @@ func (n Npm[T]) Collect(path string) (proc pkg.Processor[T], err error) {
 	}
 
 	for name := range pjson.Dependencies {
-		proc.Inventory = append(proc.Inventory, T{
+		proc.Found = append(proc.Found, T{
 			Name: name,
 		})
 	}

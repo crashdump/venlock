@@ -1,4 +1,4 @@
-module github.com/crashdump/libguardian
+module github.com/crashdump/venlock
 
 go 1.20
 

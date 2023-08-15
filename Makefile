@@ -2,10 +2,10 @@
 .DEFAULT_GOAL=test
 
 build: test
-	go build -v -o dist/libguardian cmd/libguardian/*.go
+	go build -v -o dist/venlock cmd/venlock/*.go
 
 clean:
-	rm -f dist/libguardian
+	rm -f dist/venlock
 
 test:
 	go mod tidy

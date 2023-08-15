@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/crashdump/libguardian/pkg"
+	"github.com/crashdump/venlock/pkg"
 )
 
 var fixturesDir = "../test/fixtures"
