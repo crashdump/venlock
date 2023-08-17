@@ -4,7 +4,21 @@
 [![GoDoc](https://godoc.org/github.com/crashdump/venlock?status.svg)](https://godoc.org/github.com/crashdump/venlock)
 
 
-## Install
+## Install/Run
+
+You can download precompiled binaries, containers or install directly from source.
+
+### Binaries (arm, amd64)
+
+Precompiled binaries can be [found here](https://github.com/crashdump/venlock/releases).
+
+### Docker (arm, amd64)
+
+```bash
+docker run -ti docker pull ghcr.io/crashdump/venlock:latest 
+```
+
+### Source
 
 ```bash
 go install github.com/crashdump/venlock/cmd/venlock@latest
@@ -12,8 +26,10 @@ go install github.com/crashdump/venlock/cmd/venlock@latest
 
 ## Use
 
+### Subcommands
+
 ```bash
-venlock ./sources/
+./venlock
 ```
 
     ┌─────────────┐
@@ -39,9 +55,10 @@ venlock ./sources/
     --help  (default: false)
 
 
-```bash
-venlock enumerate test/fixtures
+### Enumerate
 
+```bash
+./venlock enumerate test/fixtures
 ```
 
     ┌─────────────┐
@@ -78,6 +95,45 @@ venlock enumerate test/fixtures
     express
     compression
 
+
+### Enforce
+
+```bash
+./venlock enforce -c test/fixtures/config.json test/fixtures
+```
+
+    enforce -c test/fixtures/config.json test/fixtures
+    ┌─────────────┐
+    │ Vendor Lock │
+    └─────────────┘
+    
+    Searching for foreign libraries in source code...
+    
+    > Go...
+    ... found foreign libraries:
+      - github.com/PuerkitoBio/goquery
+      - github.com/yuin/goldmark
+      - golang.org/x/oauth2
+      - github.com/andybalholm/cascadia
+      - github.com/golang/protobuf
+      - golang.org/x/net
+      - golang.org/x/sys
+      - golang.org/x/text
+      - google.golang.org/appengine
+      - google.golang.org/protobuf
+    
+    > Maven...
+    
+    No mismatch.
+    
+    > Npm...
+    
+    No mismatch.
+    
+    non-compliant: found unexpected libraries
+
+
+## Contribute
 
 ### Build
 

@@ -42,6 +42,9 @@ func main() {
 			Email: "ap@cdfr.net",
 		}},
 		Commands: []*cli.Command{
+			/*
+			 * Enumerate
+			 */
 			{
 				Name:    "enumerate",
 				Aliases: []string{"e"},
@@ -70,6 +73,9 @@ func main() {
 					return nil
 				},
 			},
+			/*
+			 * Generate
+			 */
 			{
 				Name:    "generate",
 				Aliases: []string{"g"},
@@ -100,6 +106,9 @@ func main() {
 					return nil
 				},
 			},
+			/*
+			 * Enforce
+			 */
 			{
 				Name:    "enforce",
 				Aliases: []string{"v"},
@@ -131,35 +140,49 @@ func main() {
 
 					logger.print("Searching for foreign libraries in source code...")
 
-					var found []string
+					compliant := true
+
+					showMismatch := func(libs []string, compliant *bool) {
+						if len(libs) == 0 {
+							logger.printResult("")
+							logger.printResult("No mismatch.")
+							return
+						}
+						*compliant = false
+						logger.printResult("... found foreign libraries:")
+						for _, lib := range libs {
+							logger.printfResult(" - %s", lib)
+						}
+					}
 
 					logger.printHeader("Go...")
 					f, err := enforce[gomod.GoMod[gomod.Library], gomod.Library](config, path)
 					if err != nil {
 						logger.printFatal(err.Error())
 					}
-					found = append(found, f...)
+					showMismatch(f, &compliant)
 
 					logger.printHeader("Maven...")
 					f, err = enforce[maven.Maven[maven.Library], maven.Library](config, path)
 					if err != nil {
 						logger.printFatal(err.Error())
 					}
-					found = append(found, f...)
+					showMismatch(f, &compliant)
 
 					logger.printHeader("Npm...")
 					f, err = enforce[npm.Npm[npm.Library], npm.Library](config, path)
 					if err != nil {
 						logger.printFatal(err.Error())
 					}
-					found = append(found, f...)
+					showMismatch(f, &compliant)
 
-					if len(found) == 0 {
-						logger.print("")
-						logger.print("No mismatch, success!")
+					if compliant {
+						logger.printHeader("success.")
 						return nil
 					}
-					return errors.New("found unexpected libraries")
+
+					logger.print("")
+					return errors.New("non-compliant: found unexpected libraries")
 				},
 			},
 		},
