@@ -21,7 +21,7 @@ func (l logging) print(str string) {
 }
 
 func (l logging) printHeader(str string) {
-	l.logger.Printf("> %s", str)
+	l.logger.Printf("\n> %s", str)
 }
 
 func (l logging) printResult(str string) {
@@ -34,5 +34,5 @@ func (l logging) printfResult(format string, args interface{}) {
 
 func (l logging) printFatal(str string) {
 	l.logger.Printf("  %s", str)
-	os.Exit(1)
+	panic(str)
 }

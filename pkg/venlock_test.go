@@ -67,7 +67,7 @@ func TestEnumerate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			lg := pkg.Newvenlock[gomod.Library](tt.args.sourcePath, gomod.GoMod[gomod.Library]{})
+			lg := pkg.NewVenlock[gomod.Library](tt.args.sourcePath, gomod.GoMod[gomod.Library]{})
 			gotLibraries, err := lg.Enumerate()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Enumerate() error = %v, wantErr %v", err, tt.wantErr)
@@ -186,7 +186,7 @@ func TestEnforce(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			lg := pkg.Newvenlock[gomod.Library](tt.args.sourcePath, gomod.GoMod[gomod.Library]{})
+			lg := pkg.NewVenlock[gomod.Library](tt.args.sourcePath, gomod.GoMod[gomod.Library]{})
 			gotRes, err := lg.Enforce(tt.args.librarySet)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Enforce() error = %v, wantErr %v", err, tt.wantErr)

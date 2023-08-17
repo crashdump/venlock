@@ -9,6 +9,8 @@ import (
 
 	"github.com/crashdump/venlock/pkg"
 	"github.com/crashdump/venlock/pkg/gomod"
+	"github.com/crashdump/venlock/pkg/maven"
+	"github.com/crashdump/venlock/pkg/npm"
 )
 
 var logger *logging
@@ -54,18 +56,16 @@ func main() {
 				Action: func(cCtx *cli.Context) error {
 					path := cCtx.Args().First()
 
-					logger.printHeader("Enumerating libraries from source code...")
+					logger.print("Enumerating libraries from source code...")
 
-					lg := pkg.Newvenlock[gomod.Library](path, gomod.GoMod[gomod.Library]{})
-					results, err := lg.Enumerate()
-					if err != nil {
-						logger.printFatal(err.Error())
-					}
-					logger.printfResult("Found %d files.", len(results))
-					logger.print("")
-					for _, result := range results {
-						logger.printResult(result.Module)
-					}
+					logger.printHeader("Go...")
+					enumerate[gomod.GoMod[gomod.Library], gomod.Library](path)
+
+					logger.printHeader("Maven...")
+					enumerate[maven.Maven[maven.Library], maven.Library](path)
+
+					logger.printHeader("NPM...")
+					enumerate[npm.Npm[npm.Library], npm.Library](path)
 
 					return nil
 				},
@@ -95,17 +95,8 @@ func main() {
 					return nil
 				},
 				Action: func(cCtx *cli.Context) error {
-					//path := cCtx.Args().First()
-
 					logger.printHeader("Generating sbom.jsom from source code...")
-					panic("not implemented")
-					//results, err := venlock.Enumerate(path)
-					//if err != nil {
-					//	logger.printFatal(err.Error())
-					//}
-					//logger.printfResult("Found %d files.", len(results))
-					//logger.print("")
-
+					panic("not yet implemented")
 					return nil
 				},
 			},
@@ -136,36 +127,39 @@ func main() {
 				},
 				Action: func(cCtx *cli.Context) error {
 					path := cCtx.Args().First()
+					config := cCtx.String("config")
 
-					logger.printHeader("Searching for foreign libraries in source code...")
+					logger.print("Searching for foreign libraries in source code...")
 
-					var cfg pkg.Config[gomod.Library]
-					err := cfg.Load(cCtx.String("config"))
+					var found []string
+
+					logger.printHeader("Go...")
+					f, err := enforce[gomod.GoMod[gomod.Library], gomod.Library](config, path)
 					if err != nil {
-						return err
+						logger.printFatal(err.Error())
 					}
+					found = append(found, f...)
 
-					lg := pkg.Newvenlock[gomod.Library](path, gomod.GoMod[gomod.Library]{})
-
-					results, err := lg.Enforce(cfg.Catalogue[lg.Scanner.Name()])
+					logger.printHeader("Maven...")
+					f, err = enforce[maven.Maven[maven.Library], maven.Library](config, path)
 					if err != nil {
-						return err
+						logger.printFatal(err.Error())
 					}
+					found = append(found, f...)
 
-					if len(results) > 0 {
-						logger.printfResult("Found %d foreign libraries.", len(results))
-						logger.print("")
-						for _, result := range results {
-							logger.printResult(result.Module)
-						}
-
-						logger.print("")
-						logger.printFatal("Failed!")
+					logger.printHeader("Npm...")
+					f, err = enforce[npm.Npm[npm.Library], npm.Library](config, path)
+					if err != nil {
+						logger.printFatal(err.Error())
 					}
+					found = append(found, f...)
 
-					logger.print("")
-					logger.print("No mismatch, success!")
-					return nil
+					if len(found) == 0 {
+						logger.print("")
+						logger.print("No mismatch, success!")
+						return nil
+					}
+					return errors.New("found unexpected libraries")
 				},
 			},
 		},
@@ -174,4 +168,39 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		logger.printFatal(err.Error())
 	}
+}
+
+func enumerate[S pkg.Scanner[L], L pkg.Library](targetDir string) {
+	lg := pkg.NewVenlock[L](targetDir, *new(S))
+	results, err := lg.Enumerate()
+	if err != nil {
+		logger.printFatal(err.Error())
+	}
+	logger.printfResult("... found %d dependencies.", len(results))
+	logger.print("")
+	for _, result := range results {
+		logger.printResult(result.String())
+	}
+}
+
+func enforce[S pkg.Scanner[L], L pkg.Library](config string, targetDir string) ([]string, error) {
+	lg := pkg.NewVenlock[L](targetDir, *new(S))
+
+	var cfg pkg.Config[L]
+	err := cfg.Load(config)
+	if err != nil {
+		return []string{}, err
+	}
+
+	found, err := lg.Enforce(cfg.Catalogue[lg.Scanner.String()])
+	if err != nil {
+		return []string{}, err
+	}
+
+	var results []string
+	for _, f := range found {
+		results = append(results, f.String())
+	}
+
+	return results, nil
 }

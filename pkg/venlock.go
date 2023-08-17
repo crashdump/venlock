@@ -1,12 +1,12 @@
 package pkg
 
-type venlock[T any] struct {
+type Venlock[T Library] struct {
 	SourcePath string
-	Scanner    PackageManager[T]
+	Scanner    Scanner[T]
 }
 
-func Newvenlock[T any](sourcePath string, scanner PackageManager[T]) venlock[T] {
-	return venlock[T]{
+func NewVenlock[T Library](sourcePath string, scanner Scanner[T]) Venlock[T] {
+	return Venlock[T]{
 		SourcePath: sourcePath,
 		Scanner:    scanner,
 	}
@@ -14,7 +14,7 @@ func Newvenlock[T any](sourcePath string, scanner PackageManager[T]) venlock[T] 
 
 // Enumerate scans for known manifests in the target directory. It will then list all the
 // libraries found in this directory.
-func (l *venlock[T]) Enumerate() (libraries LibrarySet[T], err error) {
+func (l *Venlock[T]) Enumerate() (libraries LibrarySet[T], err error) {
 	manifests, err := FindManifests(l.Scanner.Filename(), l.SourcePath)
 	if err != nil {
 		return libraries, err
@@ -34,7 +34,7 @@ func (l *venlock[T]) Enumerate() (libraries LibrarySet[T], err error) {
 
 // Generate scans for known manifests in the target directory. It will then generate a config
 // file based on the libraries found in this directory.
-func (l *venlock[T]) Generate(configPath string) (err error) {
+func (l *Venlock[T]) Generate(configPath string) (err error) {
 	manifests, err := FindManifests(l.Scanner.Filename(), l.SourcePath)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (l *venlock[T]) Generate(configPath string) (err error) {
 			return err
 		}
 
-		err = proc.Save(configPath, l.Scanner.Name())
+		err = proc.Save(configPath, l.Scanner.String())
 		if err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ func (l *venlock[T]) Generate(configPath string) (err error) {
 
 // Enforce scans for known manifests in the target directory. If an unknown library is found,
 // the program will exit with error code 1.
-func (l *venlock[T]) Enforce(catalogue LibrarySet[T]) (foreign LibrarySet[T], err error) {
+func (l *Venlock[T]) Enforce(catalogue LibrarySet[T]) (foreign LibrarySet[T], err error) {
 	foreign = make(LibrarySet[T], 0)
 
 	manifests, err := FindManifests(l.Scanner.Filename(), l.SourcePath)

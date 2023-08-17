@@ -10,21 +10,17 @@ import (
 
 type GoMod[T Library] struct{}
 
-type Library struct {
-	Module string `json:"module"`
-}
+var _ pkg.Scanner[Library] = GoMod[Library]{}
 
-var _ pkg.PackageManager[Library] = GoMod[Library]{}
-
-func (g GoMod[T]) Name() string {
+func (GoMod[T]) String() string {
 	return "gomod"
 }
 
-func (g GoMod[T]) Filename() string {
+func (GoMod[T]) Filename() string {
 	return "go.mod"
 }
 
-func (g GoMod[T]) Collect(path string) (proc pkg.Processor[Library], err error) {
+func (GoMod[T]) Collect(path string) (proc pkg.Processor[Library], err error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return proc, err

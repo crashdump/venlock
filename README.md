@@ -39,6 +39,46 @@ venlock ./sources/
     --help  (default: false)
 
 
+```bash
+venlock enumerate test/fixtures
+
+```
+
+    ┌─────────────┐
+    │ Vendor Lock │
+    └─────────────┘
+    
+    Enumerating libraries from source code...
+    
+    > Go...
+    ... found 12 dependencies.
+    
+    github.com/PuerkitoBio/goquery
+    github.com/avelino/slugify
+    github.com/otiai10/copy
+    github.com/yuin/goldmark
+    golang.org/x/oauth2
+    github.com/andybalholm/cascadia
+    github.com/golang/protobuf
+    golang.org/x/net
+    golang.org/x/sys
+    golang.org/x/text
+    google.golang.org/appengine
+    google.golang.org/protobuf
+    
+    > Maven...
+    ... found 2 dependencies.
+    
+    foo:bar
+    junit:junit
+    
+    > NPM...
+    ... found 2 dependencies.
+    
+    express
+    compression
+
+
 ### Build
 
 ```bash

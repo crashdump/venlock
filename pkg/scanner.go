@@ -2,13 +2,17 @@ package pkg
 
 import "reflect"
 
-type PackageManager[T any] interface {
-	Name() string
+type Scanner[T Library] interface {
+	String() string
 	Filename() string
 	Collect(path string) (proc Processor[T], err error)
 }
 
-type LibrarySet[T any] []T
+type Library interface {
+	String() string
+}
+
+type LibrarySet[T Library] []T
 
 func (l LibrarySet[T]) contains(library T) bool {
 	for _, trusted := range l {

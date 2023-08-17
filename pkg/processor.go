@@ -1,7 +1,6 @@
 package pkg
 
-// TODO: Use go Generic's `comparable` instead of reflection
-type Processor[T any] struct {
+type Processor[T Library] struct {
 	Found LibrarySet[T]
 }
 

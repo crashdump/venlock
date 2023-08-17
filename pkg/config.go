@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-type Config[T any] struct {
+type Config[T Library] struct {
 	Version   string                   `json:"version"`
 	Catalogue map[string]LibrarySet[T] `json:"catalogue"`
 }

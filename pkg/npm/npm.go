@@ -8,21 +8,17 @@ import (
 
 type Npm[T Library] struct{}
 
-type Library struct {
-	Name string `json:"name"`
-}
+var _ pkg.Scanner[Library] = Npm[Library]{}
 
-var _ pkg.PackageManager[Library] = Npm[Library]{}
-
-func (n Npm[T]) Name() string {
+func (Npm[T]) String() string {
 	return "npm"
 }
 
-func (n Npm[T]) Filename() string {
+func (Npm[T]) Filename() string {
 	return "package.json"
 }
 
-func (n Npm[T]) Collect(path string) (proc pkg.Processor[T], err error) {
+func (Npm[T]) Collect(path string) (proc pkg.Processor[Library], err error) {
 	bytes, err := os.ReadFile(path)
 	if err != nil {
 		return proc, err
@@ -34,7 +30,7 @@ func (n Npm[T]) Collect(path string) (proc pkg.Processor[T], err error) {
 	}
 
 	for name := range pjson.Dependencies {
-		proc.Found = append(proc.Found, T{
+		proc.Found = append(proc.Found, Library{
 			Name: name,
 		})
 	}

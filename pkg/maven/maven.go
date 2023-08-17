@@ -8,29 +8,24 @@ import (
 
 type Maven[T Library] struct{}
 
-type Library struct {
-	GroupId    string `json:"group_id"`
-	ArtefactId string `json:"artefact_id"`
-}
+var _ pkg.Scanner[Library] = Maven[Library]{}
 
-var _ pkg.PackageManager[Library] = Maven[Library]{}
-
-func (m Maven[T]) Name() string {
+func (Maven[T]) String() string {
 	return "maven"
 }
 
-func (m Maven[T]) Filename() string {
+func (Maven[T]) Filename() string {
 	return "pom.xml"
 }
 
-func (m Maven[T]) Collect(path string) (proc pkg.Processor[T], err error) {
+func (Maven[T]) Collect(path string) (proc pkg.Processor[Library], err error) {
 	pom, err := gopom.Parse(path)
 	if err != nil {
 		return proc, err
 	}
 
 	for _, dep := range pom.Dependencies {
-		proc.Found = append(proc.Found, T{
+		proc.Found = append(proc.Found, Library{
 			GroupId:    dep.GroupID,
 			ArtefactId: dep.ArtifactID,
 		})
